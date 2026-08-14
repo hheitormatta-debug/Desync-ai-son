@@ -1,0 +1,565 @@
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-
+local idiomaAtual = nil
+local textos = {
+    ["pt-br"] = {
+        titulo = "⚡ DESYNC",
+        statusDesativado = "Status: Desativado",
+        statusAtivado = "Status: Ativado ✓",
+        botaoDesync = "DESYNC",
+        botaoDesativar = "DESATIVAR",
+        info = "FFlag: NextGenReplicatorEnabledWrite4\n'VOCÊ' = Onde players te veem parado",
+        marcador = "VOCÊ"
+    },
+    ["en"] = {
+        titulo = "⚡ DESYNC",
+        statusDesativado = "Status: Disabled",
+        statusAtivado = "Status: Enabled ✓",
+        botaoDesync = "DESYNC",
+        botaoDesativar = "DISABLE",
+        info = "FFlag: NextGenReplicatorEnabledWrite4\n'YOU' = Where players see you frozen",
+        marcador = "YOU"
+    }
+}
+
+-- Criar ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "DesyncGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+-- TELA DE SELEÇÃO DE IDIOMA (BEM PEQUENA)
+local languageFrame = Instance.new("Frame")
+languageFrame.Name = "LanguageFrame"
+languageFrame.Size = UDim2.new(0, 280, 0, 200)
+languageFrame.Position = UDim2.new(0.5, -140, 0.5, -100)
+languageFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+languageFrame.BorderSizePixel = 0
+languageFrame.Parent = screenGui
+
+local langCorner = Instance.new("UICorner")
+langCorner.CornerRadius = UDim.new(0, 15)
+langCorner.Parent = languageFrame
+
+-- Barra de título da seleção de idioma
+local langTitleBar = Instance.new("Frame")
+langTitleBar.Name = "LangTitleBar"
+langTitleBar.Size = UDim2.new(1, 0, 0, 40)
+langTitleBar.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+langTitleBar.BorderSizePixel = 0
+langTitleBar.Parent = languageFrame
+
+local langTitleCorner = Instance.new("UICorner")
+langTitleCorner.CornerRadius = UDim.new(0, 15)
+langTitleCorner.Parent = langTitleBar
+
+-- Botão MINIMIZAR na tela de idioma (-)
+local langMinimizeButton = Instance.new("TextButton")
+langMinimizeButton.Name = "LangMinimizeButton"
+langMinimizeButton.Size = UDim2.new(0, 30, 0, 30)
+langMinimizeButton.Position = UDim2.new(1, -70, 0, 5)
+langMinimizeButton.BackgroundColor3 = Color3.fromRGB(220, 180, 50)
+langMinimizeButton.Text = "—"
+langMinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+langMinimizeButton.TextSize = 16
+langMinimizeButton.Font = Enum.Font.GothamBold
+langMinimizeButton.BorderSizePixel = 0
+langMinimizeButton.Parent = langTitleBar
+
+local langMinimizeCorner = Instance.new("UICorner")
+langMinimizeCorner.CornerRadius = UDim.new(0, 8)
+langMinimizeCorner.Parent = langMinimizeButton
+
+-- Botão FECHAR na tela de idioma (X)
+local langCloseButton = Instance.new("TextButton")
+langCloseButton.Name = "LangCloseButton"
+langCloseButton.Size = UDim2.new(0, 30, 0, 30)
+langCloseButton.Position = UDim2.new(1, -35, 0, 5)
+langCloseButton.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+langCloseButton.Text = "X"
+langCloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+langCloseButton.TextSize = 14
+langCloseButton.Font = Enum.Font.GothamBold
+langCloseButton.BorderSizePixel = 0
+langCloseButton.Parent = langTitleBar
+
+local langCloseCorner = Instance.new("UICorner")
+langCloseCorner.CornerRadius = UDim.new(0, 8)
+langCloseCorner.Parent = langCloseButton
+
+local langTitle = Instance.new("TextLabel")
+langTitle.Size = UDim2.new(1, -20, 0, 50)
+langTitle.Position = UDim2.new(0, 10, 0, 45)
+langTitle.BackgroundTransparency = 1
+langTitle.Text = "ESCOLHA O IDIOMA\nCHOOSE LANGUAGE"
+langTitle.TextColor3 = Color3.fromRGB(100, 200, 255)
+langTitle.TextSize = 14
+langTitle.Font = Enum.Font.GothamBold
+langTitle.TextWrapped = true
+langTitle.TextYAlignment = Enum.TextYAlignment.Top
+langTitle.Parent = languageFrame
+
+local portuguesButton = Instance.new("TextButton")
+portuguesButton.Name = "PortuguesButton"
+portuguesButton.Size = UDim2.new(0, 250, 0, 38)
+portuguesButton.Position = UDim2.new(0.5, -125, 0, 105)
+portuguesButton.BackgroundColor3 = Color3.fromRGB(0, 200, 83)
+portuguesButton.Text = "🇧🇷 Português"
+portuguesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+portuguesButton.TextSize = 15
+portuguesButton.Font = Enum.Font.GothamBold
+portuguesButton.BorderSizePixel = 0
+portuguesButton.Parent = languageFrame
+
+local ptCorner = Instance.new("UICorner")
+ptCorner.CornerRadius = UDim.new(0, 10)
+ptCorner.Parent = portuguesButton
+
+local englishButton = Instance.new("TextButton")
+englishButton.Name = "EnglishButton"
+englishButton.Size = UDim2.new(0, 250, 0, 38)
+englishButton.Position = UDim2.new(0.5, -125, 0, 150)
+englishButton.BackgroundColor3 = Color3.fromRGB(60, 120, 220)
+englishButton.Text = "🇺🇸 English"
+englishButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+englishButton.TextSize = 15
+englishButton.Font = Enum.Font.GothamBold
+englishButton.BorderSizePixel = 0
+englishButton.Parent = languageFrame
+
+local enCorner = Instance.new("UICorner")
+enCorner.CornerRadius = UDim.new(0, 10)
+enCorner.Parent = englishButton
+
+-- Frame Principal (inicialmente invisível)
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 320, 0, 220)
+mainFrame.Position = UDim2.new(0.5, -160, 0.5, -110)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Visible = false
+mainFrame.Parent = screenGui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = mainFrame
+
+-- Barra de título
+local titleBar = Instance.new("Frame")
+titleBar.Name = "TitleBar"
+titleBar.Size = UDim2.new(1, 0, 0, 45)
+titleBar.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+titleBar.BorderSizePixel = 0
+titleBar.Parent = mainFrame
+
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 12)
+titleCorner.Parent = titleBar
+
+local title = Instance.new("TextLabel")
+title.Name = "Title"
+title.Size = UDim2.new(1, -100, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "⚡ DESYNC"
+title.TextColor3 = Color3.fromRGB(100, 200, 255)
+title.TextSize = 20
+title.Font = Enum.Font.GothamBold
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = titleBar
+
+-- Botão MINIMIZAR (-)
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Name = "MinimizeButton"
+minimizeButton.Size = UDim2.new(0, 35, 0, 35)
+minimizeButton.Position = UDim2.new(1, -85, 0, 5)
+minimizeButton.BackgroundColor3 = Color3.fromRGB(220, 180, 50)
+minimizeButton.Text = "—"
+minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeButton.TextSize = 18
+minimizeButton.Font = Enum.Font.GothamBold
+minimizeButton.BorderSizePixel = 0
+minimizeButton.Parent = titleBar
+
+local minimizeCorner = Instance.new("UICorner")
+minimizeCorner.CornerRadius = UDim.new(0, 8)
+minimizeCorner.Parent = minimizeButton
+
+-- Botão FECHAR (X)
+local closeButton = Instance.new("TextButton")
+closeButton.Name = "CloseButton"
+closeButton.Size = UDim2.new(0, 35, 0, 35)
+closeButton.Position = UDim2.new(1, -40, 0, 5)
+closeButton.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.TextSize = 16
+closeButton.Font = Enum.Font.GothamBold
+closeButton.BorderSizePixel = 0
+closeButton.Parent = titleBar
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 8)
+closeCorner.Parent = closeButton
+
+-- Status Label
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Name = "StatusLabel"
+statusLabel.Size = UDim2.new(1, -30, 0, 25)
+statusLabel.Position = UDim2.new(0, 15, 0, 55)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = "Status: ..."
+statusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+statusLabel.TextSize = 14
+statusLabel.Font = Enum.Font.Gotham
+statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+statusLabel.Parent = mainFrame
+
+-- Variáveis de controle
+local desyncAtivo = false
+local youLabel = nil
+local youTextLabel = nil
+local desyncPosicaoSalva = nil
+local characterConnection = nil
+local tpCheckConnection = nil
+
+-- Declarar elementos
+local infoLabel
+local desyncButton
+local desativarButton
+
+-- Função para atualizar todos os textos
+local function atualizarIdioma()
+    if not idiomaAtual then return end
+    
+    title.Text = textos[idiomaAtual].titulo
+    statusLabel.Text = desyncAtivo and textos[idiomaAtual].statusAtivado or textos[idiomaAtual].statusDesativado
+    desyncButton.Text = textos[idiomaAtual].botaoDesync
+    desativarButton.Text = textos[idiomaAtual].botaoDesativar
+    infoLabel.Text = textos[idiomaAtual].info
+    
+    if youTextLabel then
+        youTextLabel.Text = textos[idiomaAtual].marcador
+    end
+end
+
+-- Função para criar marcador
+local function criarMarcador()
+    local character = player.Character
+    if not character then return end
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if not humanoidRootPart then return end
+    
+    if youLabel then
+        youLabel:Destroy()
+    end
+    
+    desyncPosicaoSalva = humanoidRootPart.Position
+    
+    youLabel = Instance.new("Part")
+    youLabel.Name = "YouLabel"
+    youLabel.Size = Vector3.new(1, 1, 1)
+    youLabel.CFrame = CFrame.new(desyncPosicaoSalva + Vector3.new(0, 3, 0))
+    youLabel.Anchored = true
+    youLabel.CanCollide = false
+    youLabel.Transparency = 1
+    youLabel.Parent = workspace
+    
+    local billboardGui = Instance.new("BillboardGui")
+    billboardGui.Size = UDim2.new(0, 200, 0, 50)
+    billboardGui.StudsOffset = Vector3.new(0, 0, 0)
+    billboardGui.AlwaysOnTop = true
+    billboardGui.Enabled = true
+    billboardGui.Parent = youLabel
+    
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.Text = textos[idiomaAtual].marcador
+    textLabel.TextColor3 = Color3.fromRGB(100, 200, 255)
+    textLabel.TextSize = 40
+    textLabel.Font = Enum.Font.GothamBold
+    textLabel.TextStrokeTransparency = 0
+    textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    textLabel.Parent = billboardGui
+    
+    youTextLabel = textLabel
+    
+    print("📍 Marcador criado na posição:", desyncPosicaoSalva)
+end
+
+-- Detecção de respawn E TELETRANSPORTE
+local function setupCharacterDetection()
+    if characterConnection then
+        characterConnection:Disconnect()
+    end
+    
+    -- Detectar quando player renasce
+    characterConnection = player.CharacterAdded:Connect(function(character)
+        if desyncAtivo then
+            local hrp = character:WaitForChild("HumanoidRootPart")
+            wait(0.5)
+            criarMarcador()
+            print("🔄 Player renasceu! Marcador atualizado!")
+        end
+    end)
+    
+    -- Detectar teletransporte (mudança grande de posição)
+    local lastPosition = nil
+    
+    if tpCheckConnection then
+        tpCheckConnection:Disconnect()
+    end
+    
+    tpCheckConnection = game:GetService("RunService").Heartbeat:Connect(function()
+        if not desyncAtivo then
+            if tpCheckConnection then
+                tpCheckConnection:Disconnect()
+                tpCheckConnection = nil
+            end
+            return
+        end
+        
+        local character = player.Character
+        if character then
+            local hrp = character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                if lastPosition then
+                    local distance = (hrp.Position - lastPosition).Magnitude
+                    
+                    -- Se moveu mais de 50 studs instantaneamente = teletransporte
+                    if distance > 50 then
+                        print("🌀 Teletransporte detectado! Atualizando marcador...")
+                        criarMarcador()
+                    end
+                end
+                
+                lastPosition = hrp.Position
+            end
+        end
+    end)
+end
+
+-- Ativar desync
+local function ativarDesync()
+    desyncAtivo = true
+    statusLabel.Text = textos[idiomaAtual].statusAtivado
+    statusLabel.TextColor3 = Color3.fromRGB(100, 255, 100)
+    
+    pcall(function()
+        setfflag("NextGenReplicatorEnabledWrite4", "True")
+    end)
+    
+    criarMarcador()
+    setupCharacterDetection()
+    
+    mainFrame.BackgroundColor3 = Color3.fromRGB(30, 40, 35)
+    
+    print("✅ Desync ativado!")
+end
+
+-- Resetar desync
+local function resetarDesync()
+    desyncAtivo = false
+    statusLabel.Text = textos[idiomaAtual].statusDesativado
+    statusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    
+    pcall(function()
+        setfflag("NextGenReplicatorEnabledWrite4", "False")
+    end)
+    
+    if characterConnection then
+        characterConnection:Disconnect()
+        characterConnection = nil
+    end
+    
+    if tpCheckConnection then
+        tpCheckConnection:Disconnect()
+        tpCheckConnection = nil
+    end
+    
+    if youLabel then
+        youLabel:Destroy()
+        youLabel = nil
+    end
+    
+    youTextLabel = nil
+    desyncPosicaoSalva = nil
+    
+    mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+    
+    print("❌ Desync desativado!")
+end
+
+-- Botão Desync
+desyncButton = Instance.new("TextButton")
+desyncButton.Name = "DesyncButton"
+desyncButton.Size = UDim2.new(0, 135, 0, 45)
+desyncButton.Position = UDim2.new(0, 15, 0, 90)
+desyncButton.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+desyncButton.Text = "DESYNC"
+desyncButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+desyncButton.TextSize = 16
+desyncButton.Font = Enum.Font.GothamBold
+desyncButton.BorderSizePixel = 0
+desyncButton.Parent = mainFrame
+
+local desyncCorner = Instance.new("UICorner")
+desyncCorner.CornerRadius = UDim.new(0, 10)
+desyncCorner.Parent = desyncButton
+
+-- Botão Desativar
+desativarButton = Instance.new("TextButton")
+desativarButton.Name = "DesativarButton"
+desativarButton.Size = UDim2.new(0, 135, 0, 45)
+desativarButton.Position = UDim2.new(1, -150, 0, 90)
+desativarButton.BackgroundColor3 = Color3.fromRGB(255, 100, 100)
+desativarButton.Text = "DESATIVAR"
+desativarButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+desativarButton.TextSize = 14
+desativarButton.Font = Enum.Font.GothamBold
+desativarButton.BorderSizePixel = 0
+desativarButton.Parent = mainFrame
+
+local desativarCorner = Instance.new("UICorner")
+desativarCorner.CornerRadius = UDim.new(0, 10)
+desativarCorner.Parent = desativarButton
+
+-- Info Label
+infoLabel = Instance.new("TextLabel")
+infoLabel.Name = "InfoLabel"
+infoLabel.Size = UDim2.new(1, -30, 0, 50)
+infoLabel.Position = UDim2.new(0, 15, 0, 150)
+infoLabel.BackgroundTransparency = 1
+infoLabel.Text = "..."
+infoLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+infoLabel.TextSize = 10
+infoLabel.Font = Enum.Font.Code
+infoLabel.TextWrapped = true
+infoLabel.TextYAlignment = Enum.TextYAlignment.Top
+infoLabel.Parent = mainFrame
+
+-- Bolinha Toggle
+local toggleButton = Instance.new("ImageButton")
+toggleButton.Name = "ToggleButton"
+toggleButton.Size = UDim2.new(0, 60, 0, 60)
+toggleButton.Position = UDim2.new(0.5, -30, 0.5, -30)
+toggleButton.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+toggleButton.BorderSizePixel = 0
+toggleButton.Visible = false
+toggleButton.Active = true
+toggleButton.Draggable = true
+toggleButton.Parent = screenGui
+
+local toggleText = Instance.new("TextLabel")
+toggleText.Size = UDim2.new(1, 0, 1, 0)
+toggleText.BackgroundTransparency = 1
+toggleText.Text = "⚡"
+toggleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleText.TextSize = 30
+toggleText.Font = Enum.Font.GothamBold
+toggleText.Parent = toggleButton
+
+local toggleCorner = Instance.new("UICorner")
+toggleCorner.CornerRadius = UDim.new(1, 0)
+toggleCorner.Parent = toggleButton
+
+local toggleStroke = Instance.new("UIStroke")
+toggleStroke.Color = Color3.fromRGB(255, 255, 255)
+toggleStroke.Thickness = 3
+toggleStroke.Parent = toggleButton
+
+-- Eventos da seleção de idioma
+portuguesButton.MouseButton1Click:Connect(function()
+    idiomaAtual = "pt-br"
+    languageFrame.Visible = false
+    mainFrame.Visible = true
+    atualizarIdioma()
+    portuguesButton.BackgroundColor3 = Color3.fromRGB(0, 170, 63)
+    wait(0.1)
+    portuguesButton.BackgroundColor3 = Color3.fromRGB(0, 200, 83)
+    print("🇧🇷 Idioma selecionado: Português (Brasil)")
+end)
+
+englishButton.MouseButton1Click:Connect(function()
+    idiomaAtual = "en"
+    languageFrame.Visible = false
+    mainFrame.Visible = true
+    atualizarIdioma()
+    englishButton.BackgroundColor3 = Color3.fromRGB(40, 100, 200)
+    wait(0.1)
+    englishButton.BackgroundColor3 = Color3.fromRGB(60, 120, 220)
+    print("🇺🇸 Language selected: English")
+end)
+
+
+langMinimizeButton.MouseButton1Click:Connect(function()
+    languageFrame.Visible = false
+    toggleButton.Visible = true
+    langMinimizeButton.BackgroundColor3 = Color3.fromRGB(200, 160, 30)
+    wait(0.1)
+    langMinimizeButton.BackgroundColor3 = Color3.fromRGB(220, 180, 50)
+end)
+
+langCloseButton.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+    print("❌ Script closed there!")
+end)
+
+
+desyncButton.MouseButton1Click:Connect(function()
+    ativarDesync()
+    desyncButton.BackgroundColor3 = Color3.fromRGB(80, 180, 235)
+    wait(0.1)
+    desyncButton.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+end)
+
+desativarButton.MouseButton1Click:Connect(function()
+    resetarDesync()
+    desativarButton.BackgroundColor3 = Color3.fromRGB(235, 80, 80)
+    wait(0.1)
+    desativarButton.BackgroundColor3 = Color3.fromRGB(255, 100, 100)
+end)
+
+minimizeButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = false
+    toggleButton.Visible = true
+    minimizeButton.BackgroundColor3 = Color3.fromRGB(200, 160, 30)
+    wait(0.1)
+    minimizeButton.BackgroundColor3 = Color3.fromRGB(220, 180, 50)
+end)
+
+closeButton.MouseButton1Click:Connect(function()
+    if desyncAtivo then
+        resetarDesync()
+    end
+    
+    screenGui:Destroy()
+    print("❌ Script closed!")
+end)
+
+
+local dragStartTime = 0
+toggleButton.MouseButton1Down:Connect(function()
+    dragStartTime = tick()
+end)
+
+toggleButton.MouseButton1Up:Connect(function()
+    local dragDuration = tick() - dragStartTime
+    if dragDuration < 0.2 then
+        -- Se ainda não escolheu idioma, volta pra tela de seleção
+        if not idiomaAtual then
+            languageFrame.Visible = true
+        else
+            mainFrame.Visible = true
+        end
+        toggleButton.Visible = false
+    end
+end)
+
+print("Ready, Son😀")
