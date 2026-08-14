@@ -1,7 +1,10 @@
+-- Desync Script para Roblox
+-- Criado com interface moderna
+
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--
+-- Sistema de idiomas
 local idiomaAtual = nil
 local textos = {
     ["pt-br"] = {
@@ -497,7 +500,7 @@ englishButton.MouseButton1Click:Connect(function()
     print("🇺🇸 Language selected: English")
 end)
 
-
+-- Botões da tela de seleção de idioma
 langMinimizeButton.MouseButton1Click:Connect(function()
     languageFrame.Visible = false
     toggleButton.Visible = true
@@ -508,10 +511,10 @@ end)
 
 langCloseButton.MouseButton1Click:Connect(function()
     screenGui:Destroy()
-    print("❌ Script closed there!")
+    print("❌ Script fechado na seleção de idioma!")
 end)
 
-
+-- Eventos da UI principal
 desyncButton.MouseButton1Click:Connect(function()
     ativarDesync()
     desyncButton.BackgroundColor3 = Color3.fromRGB(80, 180, 235)
@@ -540,10 +543,10 @@ closeButton.MouseButton1Click:Connect(function()
     end
     
     screenGui:Destroy()
-    print("❌ Script closed!")
+    print("❌ Script fechado e desync desativado!")
 end)
 
-
+-- Bolinha abre a UI
 local dragStartTime = 0
 toggleButton.MouseButton1Down:Connect(function()
     dragStartTime = tick()
@@ -562,4 +565,6 @@ toggleButton.MouseButton1Up:Connect(function()
     end
 end)
 
-print("Ready, Son😀")
+print("✨ Desync Script carregado!")
+print("🌐 Escolha seu idioma primeiro!")
+print("➖ Botão '-' minimiza | ❌ Botão 'X' fecha")
